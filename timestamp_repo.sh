@@ -18,7 +18,7 @@ git clone $git_repo $local_clone
 pushd $local_clone
 branch=$(git branch --show-current)
 sha=$(git rev-parse HEAD)
-repo_digest=$(find -s . -type f -not -path "*/.git/*" -print0 | xargs -0 sha256sum | sha256sum | cut -f1 -d ' ')
+repo_digest=$(find . -type f -not -path "*/.git/*" -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -f1 -d ' ')
 popd
 rm -rf $local_clone
 
