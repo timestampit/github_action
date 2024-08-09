@@ -11,7 +11,7 @@ if [ "$#" -ne 1 ]; then
 fi
 git_repo=$1
 
-local_clone=$(mktemp -d -t $(basename $0))
+local_clone=$(mktemp -d)
 
 git clone $git_repo $local_clone
 

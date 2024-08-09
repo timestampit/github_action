@@ -22,7 +22,7 @@ key_url=$(head -1 "$repo_timestamp_file" | cut -d "|" -f "6")
 git_repo=$(head -1 "$repo_timestamp_file" | cut -d "|" -f "7" | jq -r .repo)
 sha=$(head -1 "$repo_timestamp_file" | cut -d "|" -f "7" | jq -r .sha)
 
-local_clone=$(mktemp -d -t $(basename $0))
+local_clone=$(mktemp -d)
 git clone $git_repo $local_clone
 
 pushd $local_clone
