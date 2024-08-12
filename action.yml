@@ -41,14 +41,17 @@ runs:
       shell: bash
       run: |
         if ! git ls-remote --exit-code --heads origin refs/heads/$TIMESTAMPS_BRANCH > /dev/null; then
+          # create a new branch that is empty
           git switch --orphan $TIMESTAMPS_BRANCH
 
           # Setup the new branch with a README and a verification script
-          curl -o README.md https://raw.githubusercontent.com/timestampit/example_clients/main/github_workflow/new_branch_files/README.md
-          curl -o verify_repo_timestamp.sh https://raw.githubusercontent.com/timestampit/example_clients/main/github_workflow/new_branch_files/verify_repo_timestamp.sh
+          # These files are taken from this github action repo
+          cat "{{ github.action_path }}/new_branch_files/README.md" > README.md
+          cat "{{ github.action_path }}/new_branch_files/verify_repo_timestamp.sh" > verify_repo_timestamp.sh
           chmod 755 verify_repo_timestamp.sh
           git add README.md verify_repo_timestamp.sh
 
+          # push the new branch with support files
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Creating $TIMESTAMPS_BRANCH branch"
