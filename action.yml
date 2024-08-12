@@ -1,5 +1,5 @@
 name: 'TimestampIt!'
-description: 'Create a Trusted Timestamps for your GitHub repository using TimestampIt!'
+description: 'Create Trusted Timestamps for your GitHub repository using TimestampIt!'
 inputs:
   timestamps_branch:  # id of input
     description: 'Branch where trusted timestamps are stored'
@@ -26,6 +26,7 @@ runs:
     - name: hash default branch of repo
       id: hash-repo
       working-directory: code_to_timestamp
+      shell: bash
       run: |
         echo "REPO_HASH=$(git ls-tree --full-tree -r --name-only HEAD | sort | xargs shasum -a 256 | shasum -a 256 | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
@@ -37,6 +38,7 @@ runs:
       env:
         TIMESTAMPS_BRANCH: ${{ inputs.timestamps_branch }}
       working-directory: code_to_timestamp
+      shell: bash
       run: |
         if ! git ls-remote --exit-code --heads origin refs/heads/$TIMESTAMPS_BRANCH > /dev/null; then
           git switch --orphan $TIMESTAMPS_BRANCH
@@ -69,6 +71,7 @@ runs:
         TIMESTAMPIT_USERNAME: ${{ inputs.timestampit_username }}
         TIMESTAMPIT_PASSWORD: ${{ inputs.timestampit_password }}
       working-directory: timestamps
+      shell: bash
       run: |
         timestamp_filename="$GITHUB_SHA.trusted_timestamp"
         ext_json="{\"repo\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\", \"sha\": \"$GITHUB_SHA\"}"
