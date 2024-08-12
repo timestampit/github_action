@@ -1,0 +1,88 @@
+name: 'TimestampIt!'
+description: 'Create a Trusted Timestamps for your GitHub repository using TimestampIt!'
+inputs:
+  timestamps_branch:  # id of input
+    description: 'Branch where trusted timestamps are stored'
+    required: false
+    default: 'trusted_timestamps'
+  timestampit_username:  # id of input
+    description: 'Username for TimestampIt! user'
+    required: false
+    default: 'public'
+  timestampit_password:  # id of input
+    description: 'Password for TimestampIt! user'
+    required: false
+    default: 'publicpublic'
+runs:
+  using: "composite"
+  steps:
+    # checkout the repo into a subfolder
+    - name: checkout default branch of repo
+      uses: actions/checkout@v4
+      with:
+        path: code_to_timestamp
+
+    # create a hash of all files in the repo
+    - name: hash default branch of repo
+      id: hash-repo
+      working-directory: code_to_timestamp
+      run: |
+        echo "REPO_HASH=$(git ls-tree --full-tree -r --name-only HEAD | sort | xargs shasum -a 256 | shasum -a 256 | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+    # check if the special trusted timestamp branch exists.
+    # If it does not, create it.
+    # If creating a new branch add the support files (Readme and verification script)
+    # Note: This reuses the checkout used to make the repo hash for speed and convenience
+    - name: create timestamps branch if it does not exist
+      env:
+        TIMESTAMPS_BRANCH: ${{ inputs.timestamps_branch }}
+      working-directory: code_to_timestamp
+      run: |
+        if ! git ls-remote --exit-code --heads origin refs/heads/$TIMESTAMPS_BRANCH > /dev/null; then
+          git switch --orphan $TIMESTAMPS_BRANCH
+
+          # Setup the new branch with a README and a verification script
+          curl -o README.md https://raw.githubusercontent.com/timestampit/example_clients/main/github_workflow/new_branch_files/README.md
+          curl -o verify_repo_timestamp.sh https://raw.githubusercontent.com/timestampit/example_clients/main/github_workflow/new_branch_files/verify_repo_timestamp.sh
+          chmod 755 verify_repo_timestamp.sh
+          git add README.md verify_repo_timestamp.sh
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Creating $TIMESTAMPS_BRANCH branch"
+          git push origin $TIMESTAMPS_BRANCH
+        fi
+
+    # checkout the branch to which the new timestamp will be added
+    - name: checkout timestamps branch of repo
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.timestamps_branch }}
+        path: timestamps
+
+    # Create and commit, and push the new trusted timestamp
+    - name: Create trusted timestamp
+      env:
+        REPO_HASH: ${{ steps.hash-repo.outputs.REPO_HASH }}
+        EXT_JSON: ${{ steps.construct-ext.outputs.EXT_JSON }}
+        TIMESTAMPS_BRANCH: ${{ inputs.timestamps_branch }}
+        TIMESTAMPIT_USERNAME: ${{ inputs.timestampit_username }}
+        TIMESTAMPIT_PASSWORD: ${{ inputs.timestampit_password }}
+      working-directory: timestamps
+      run: |
+        timestamp_filename="$GITHUB_SHA.trusted_timestamp"
+        ext_json="{\"repo\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\", \"sha\": \"$GITHUB_SHA\"}"
+
+        curl \
+          --data-urlencode algorithm=sha256 \
+          --data-urlencode digest=$REPO_HASH \
+          --data-urlencode ext="$ext_json" \
+          --user $TIMESTAMPIT_USERNAME:$TIMESTAMPIT_PASSWORD \
+          -o "$timestamp_filename" \
+          https://timestampit.com/create
+
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add "$timestamp_filename"
+        git commit -m "Add trusted timestamp for sha $GITHUB_SHA"
+        git push origin $TIMESTAMPS_BRANCH
