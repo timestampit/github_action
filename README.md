@@ -16,7 +16,7 @@ All inputs are optional. You can use it simply with
 
 Several inputs are defined to customize behavior:
 ```
-- uses: timestampit/github_action@v0.5
+- uses: timestampit/github_action@v0.8
   with:
     # Name of the branch where trusted timestamps will be stored.
     # If this branch does not already exist it will be created
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     name: "Create a trusted timestamp for this repo"
     steps:
-      - uses: timestampit/github_action@v0.5
+      - uses: timestampit/github_action@v0.8
 ```
 
 TODO: example for pull request merges
