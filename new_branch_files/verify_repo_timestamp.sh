@@ -19,23 +19,23 @@ fi
 trusted_timestamp_data=$(head -1 "$repo_timestamp_file" | tr -d "\n")
 
 # ensure the trusted timestamp file starts with 1.0|
-if [[ $trusted_timestamp_data != 1.0\|* ]]; then
+if [[ "$trusted_timestamp_data" != 1.0\|* ]]; then
   echo "Error: $repo_timestamp_file does not appear to be a TimestampIt! Trusted Timestamp version 1.0 file"
   exit 1
 fi
 
 # ensure the trusted timestamp file first line has 6 | characters (7 fields)
-if [[ 6 -ne $(echo $trusted_timestamp_data | tr -cd '|' | wc -c) ]]; then
+if [[ 6 -ne $(echo "$trusted_timestamp_data" | tr -cd '|' | wc -c) ]]; then
   echo "Error: $repo_timestamp_file does not have exactly 6 | characters on the first line, indicating this is not a valid TimestampIt! Trusted Timestamp version 1.0 file"
   exit 1
 fi
 
 # extract the needed fields
-timestamp=$(echo $trusted_timestamp_data | cut -d "|" -f "3")
-hash_algo=$(echo $trusted_timestamp_data | cut -d "|" -f "4")
-expected_repo_digest=$(echo $trusted_timestamp_data | cut -d "|" -f "5")
-key_url=$(echo $trusted_timestamp_data | cut -d "|" -f "6")
-sha=$(echo $trusted_timestamp_data | cut -d "|" -f "7" | jq -r .sha)
+timestamp=$(echo "$trusted_timestamp_data" | cut -d "|" -f "3")
+hash_algo=$(echo "$trusted_timestamp_data" | cut -d "|" -f "4")
+expected_repo_digest=$(echo "$trusted_timestamp_data" | cut -d "|" -f "5")
+key_url=$(echo "$trusted_timestamp_data" | cut -d "|" -f "6")
+sha=$(echo "$trusted_timestamp_data" | cut -d "|" -f "7" | jq -r .sha)
 
 if [[ "$hash_algo" != "sha256" ]]; then
   echo "This script only supports timestamps made with sha256 hashes"
@@ -44,14 +44,14 @@ fi
 
 # Clonse this repo into a temp dir
 local_clone=$(mktemp --directory)
-git clone --quiet . $local_clone
+git clone --quiet . "$local_clone"
 
 # hash the cloned repo at the same sha as the trusted timestamp
-pushd $local_clone > /dev/null
-git checkout --quiet $sha
+pushd "$local_clone" > /dev/null
+git checkout --quiet "$sha"
 repo_digest=$(git ls-tree --full-tree -r --name-only HEAD | sort | xargs shasum -a 256 | shasum -a 256 | awk '{print $1}')
 popd > /dev/null
-rm -rf $local_clone
+rm -rf "$local_clone"
 
 if [[ "$expected_repo_digest" == "$repo_digest" ]]; then
   echo "Repo digests match"
@@ -88,6 +88,6 @@ openssl pkeyutl \
   -rawin -in "$message_file" \
   -sigfile "$signature_file"
 
-rm -rf $tmp_dir
+rm -rf "$tmp_dir"
 echo "All verifications successful"
 echo "All files in this repo at commit $sha were created no later than $timestamp"
