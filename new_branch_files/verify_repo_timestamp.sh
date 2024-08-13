@@ -19,7 +19,7 @@ fi
 trusted_timestamp_data=$(head -1 "$repo_timestamp_file" | tr -d "\n")
 
 # ensure the trusted timestamp file starts with 1.0|
-if [[ $trusted_timestamp_data != 1.0\|*  ]]; then
+if [[ $trusted_timestamp_data != 1.0\|* ]]; then
   echo "Error: $repo_timestamp_file does not appear to be a TimestampIt! Trusted Timestamp version 1.0 file"
   exit 1
 fi
@@ -44,13 +44,13 @@ fi
 
 # Clonse this repo into a temp dir
 local_clone=$(mktemp --directory)
-git clone  --quiet . $local_clone
+git clone --quiet . $local_clone
 
 # hash the cloned repo at the same sha as the trusted timestamp
 pushd $local_clone > /dev/null
 git checkout --quiet $sha
 repo_digest=$(git ls-tree --full-tree -r --name-only HEAD | sort | xargs shasum -a 256 | shasum -a 256 | awk '{print $1}')
-popd  > /dev/null
+popd > /dev/null
 rm -rf $local_clone
 
 if [[ "$expected_repo_digest" == "$repo_digest" ]]; then
