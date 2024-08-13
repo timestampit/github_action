@@ -7,6 +7,30 @@ Trusted Timestamps prove when your code was merged or pushed into your GitHub re
 Trusted Timestamps prove a time that your code or data inventions existed at. You can use these Trusted Timestamps
 to prove your original code or data predates any copies that may exist.
 
+## Usage
+
+All inputs are optional. You can use it simply with
+```
+- uses: timestampit/github_action@v0.5
+```
+
+Several inputs are defined to customize behavior:
+```
+- uses: timestampit/github_action@v0.5
+  with:
+    # Name of the branch where trusted timestamps will be stored.
+    # If this branch does not already exist it will be created
+    # as an orphan, empty branch.
+    new_branch_files/verify_repo_timestamp.sh: trusted_timestamps
+
+    # Username for the TimestampIt! account to use.
+    # If not defined, then a default public user for GitHub actions is used
+    timestampit_username: your_timestampit_username
+
+    # Password for the TimestampIt! account to use
+    timestampit_password: your_timestampit_password
+```
+
 ## Trusted Timestamps overview
 
 When this action runs it creates and commits a Trusted Timestamp file in your repo on a special branch. These files are plain text files that contain a timestamp and other data that is needed to verify the Trusted Timestamps.
@@ -34,30 +58,6 @@ The output of the script will inform you if the timestamp verifies, or why it fa
 All files in this repo at commit 284951a56c288cc719cee3ca9b093033cc2135fc were created no later than 2024-08-12T20:26:51Z
 ```
 
-## Usage
-
-All inputs are optional. You can use it simply with
-```
-- uses: timestampit/code_stamper_action@v0.5
-```
-
-Several inputs are defined to customize behavior:
-```
-- uses: timestampit/code_stamper_action@v0.5
-  with:
-    # Name of the branch where trusted timestamps will be stored.
-    # If this branch does not already exist it will be created
-    # as an orphan, empty branch.
-    new_branch_files/verify_repo_timestamp.sh: trusted_timestamps
-
-    # Username for the TimestampIt! account to use.
-    # If not defined, then a default public user for GitHub actions is used
-    timestampit_username: your_timestampit_username
-
-    # Password for the TimestampIt! account to use
-    timestampit_password: your_timestampit_password
-```
-
 ## Full Workflow Examples
 
 ### Recommended usage
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     name: "Create a trusted timestamp for this repo"
     steps:
-      - uses: timestampit/code_stamper_action@v0.5
+      - uses: timestampit/github_action@v0.5
 ```
 
 TODO: example for pull request merges

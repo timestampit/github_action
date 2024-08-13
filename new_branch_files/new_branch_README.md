@@ -1,17 +1,10 @@
-# Signed Timestamps Branch
+# Trusted Timestamps Branch
 
-This is a special branch that contains signed timestamps of commits in this repository known as Trusted Timestamps.
+This is a special branch that contains signed timestamps of commits in this repository known as Trusted Timestamps. This branch and the Trusted Timestamps within it are created by the [TimestampIt! GitHub Action](https://github.com/timestampit/github_action/), see your Actions tab for it's configuration. In general you should not add or edit any files in this branch manually.
 
-These Trusted Timestamps prove the existence of the named commit sha at the timestamped time.
+These Trusted Timestamps prove the existence of the named commit sha at the timestamped time. The included [`verify_repo_timestamp.sh`](verify_repo_timestamp.sh) command can be used to verify the authenticity of these timestamps and prove the existence of your code at the timestamped time.
 
-These Trusted Timestamps are created by a GitHub Action, see your Actions tab for it's configuration.
-
-The `verify_repo_timestamp.sh` command can be used to verify the authenticity of these timestamps.
-
-These timestamps are created by a Trusted Third Party called TimestampIt!.
-
-See https://timestampit.com/docs/timestamp_a_git_repo for more information.
-
+These timestamps are created by a Trusted Third Party called TimestampIt!. See https://timestampit.com/docs/timestamp_a_git_repo for more information.
 
 ## Structure
 
@@ -23,12 +16,11 @@ KgLdXJnIueVvI2C6a0JgULd2i7yukC4BFYl9jXiLtMsGHXmsoELz3jh1XBm0Mki20YPw96i62HATD6Xh
 ```
 
 The first line is the timestamp data. See https://timestampit.com/docs/design for a description of each field.
-The second line is the cryptographic signature of the first line. If anything in this file is changed in any way, the Trusted Timestamp will fail to verify.
-
+The second line is the cryptographic signature (ED25519) of the first line. If anything in this file is changed in any way, the Trusted Timestamp will fail to verify.
 
 ## Verifying these Trusted Timestamps.
 
-By running the verification script, you are verifying that this file is completely unchanged from what was created by TimestampIt!. In doing so you are proving that given commit sha existed in this repo at the timestamp in the Trusted Timestamp (the third field on line one).
+By running [the verification script](verify_repo_timestamp.sh), you are verifying that this file is completely unchanged from what was created by TimestampIt!. In doing so you are proving that given commit sha, and repo files within it, existed in this repo at the timestamp in the Trusted Timestamp.
 
 To verify a given Trusted Timestamp, run the included verification script like so:
 `./verify_repo_timestamp.sh <trusted timestamp filename>`.
@@ -43,4 +35,3 @@ If it fails to verify, you will see output like:
 `Repo digests do not match`
 or
 `Signature Verification Failure`.
-
