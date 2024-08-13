@@ -65,10 +65,10 @@ if ! git cat-file -e "$sha"; then
   exit 1
 fi
 
+echo "Calculating the repo digest..."
 # Clone this repo into a temp dir
 local_clone=$(mktemp --directory)
 git clone --quiet "$repo_dir" "$local_clone"
-
 # hash the cloned repo at the same sha as the trusted timestamp
 pushd "$local_clone" > /dev/null
 git checkout --quiet "$sha"
@@ -107,6 +107,7 @@ if ! curl --fail --silent --output "$key_file" "$key_url"; then
 fi
 
 # Perform ED25519 signature verification using openssl
+# If this fails it prints "Signature Verification Failure"
 openssl pkeyutl \
   -verify -pubin \
   -inkey "$key_file" \
