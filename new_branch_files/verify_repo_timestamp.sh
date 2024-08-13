@@ -2,8 +2,7 @@
 
 # This script verifies Trusted Timestamps created by TimestampIt! GitHub Actions in git repositories
 # This script will exit with a 0 status if all verifications succeed.
-# This script will exit with a non-zero status if any verification step fails,
-# or if any step in the script fails.
+# This script will exit with a non-zero status if any verification step fails.
 
 set -e
 
@@ -93,8 +92,10 @@ echo -n "$trusted_timestamp_data" > "$message_file"
 signature=$(head -2 "$repo_timestamp_file" | tail -1 | tr -d "\n" | base64 -D)
 echo -n "$signature" > "$signature_file"
 
-# Attempt to get the key from the default key url. If that fails, get it from the GitHub replica repo
+# Attempt to get the key from the key url within the Trusted Timestamp.
+# If that fails, get it from the GitHub replica repo
 if ! curl --fail --silent --output "$key_file" "$key_url"; then
+  # get the key id from the key url
   # key id is kleybzu2afwz for https://timestampit.com/key/kleybzu2afwz
   key_id=$(echo "$key_url" | rev | cut -d '/' -f 1 | rev)
   github_backup_key_url="https://raw.githubusercontent.com/timestampit/keychain/main/keys/pem/$key_id.pem"
@@ -105,7 +106,7 @@ if ! curl --fail --silent --output "$key_file" "$key_url"; then
   fi
 fi
 
-# Perform the verification using openssl
+# Perform ED25519 signature verification using openssl
 openssl pkeyutl \
   -verify -pubin \
   -inkey "$key_file" \
