@@ -4,11 +4,13 @@
 # This script will exit with a 0 status if all verifications succeed.
 # This script will exit with a non-zero status if any verification step fails,
 # or if any step in the script fails.
-#
-# Any modifications to this script may be attempts to subvert the verification process and should
-# be carefully reviewed to ensure safety.
 
 set -e
+
+# make sure the needed external programs are available
+for util in "jq" "shasum" "openssl"; do
+  command -v "$util" >/dev/null 2>&1 || { echo >&2 "Error: The $util command line program must be installed."; exit 1; }
+done
 
 # Parse the command line
 if [ "$#" -ne 1 ]; then
