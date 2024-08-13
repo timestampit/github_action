@@ -89,8 +89,7 @@ message_file="$tmp_dir/message"
 signature_file="$tmp_dir/sig"
 key_file="$tmp_dir/key"
 echo -n "$trusted_timestamp_data" > "$message_file"
-signature=$(head -2 "$repo_timestamp_file" | tail -1 | tr -d "\n" | base64 -D)
-echo -n "$signature" > "$signature_file"
+head -2 "$repo_timestamp_file" | tail -1 | tr -d "\n" | base64 -D > "$signature_file"
 
 # Attempt to get the key from the key url within the Trusted Timestamp.
 # If that fails, get it from the GitHub replica repo
