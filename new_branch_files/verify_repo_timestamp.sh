@@ -15,7 +15,17 @@ if ! test -f "$repo_timestamp_file"; then
   exit 1
 fi
 
-# split the trusted timestamp into first and second lines (message and signature)
+# ensure the trusted timestamp is inside a git repo
+repo_dir=$(dirname "$repo_timestamp_file")
+pushd "$repo_dir" > /dev/null
+if ! git rev-parse &> /dev/null; then
+  echo "Error: $repo_timestamp_file is not within a git repository"
+  exit 1
+fi
+popd > /dev/null
+
+# All data for the trusted timestamp is on the first line. The second line is the signature
+# Split off the first line for further parsing
 trusted_timestamp_data=$(head -1 "$repo_timestamp_file" | tr -d "\n")
 
 # ensure the trusted timestamp file starts with 1.0|
@@ -38,13 +48,19 @@ key_url=$(echo "$trusted_timestamp_data" | cut -d "|" -f "6")
 sha=$(echo "$trusted_timestamp_data" | cut -d "|" -f "7" | jq -r .sha)
 
 if [[ "$hash_algo" != "sha256" ]]; then
-  echo "This script only supports timestamps made with sha256 hashes"
+  echo "Error: This script only supports timestamps made with sha256 hashes"
   exit 1
 fi
 
-# Clonse this repo into a temp dir
+# Before attempting to check out the commit sha, test if it exists at all
+if ! git cat-file -e "$sha"; then
+  echo "Error: $sha is not a commit in this repo"
+  exit 1
+fi
+
+# Clone this repo into a temp dir
 local_clone=$(mktemp --directory)
-git clone --quiet . "$local_clone"
+git clone --quiet "$repo_dir" "$local_clone"
 
 # hash the cloned repo at the same sha as the trusted timestamp
 pushd "$local_clone" > /dev/null
