@@ -1,12 +1,18 @@
 #!/bin/bash
 
-set -e
+# This script verifies Trusted Timestamps created by TimestampIt! GitHub Actions in git repositories
+# This script will exit with a 0 status if all verifications succeed.
+# This script will exit with a non-zero status if any verification step fails,
+# or if any step in the script fails.
+#
+# Any modifications to this script may be attempts to subvert the verification process and should
+# be carefully reviewed to ensure safety.
 
-LC_ALL=POSIX
+set -e
 
 # Parse the command line
 if [ "$#" -ne 1 ]; then
-  echo "usage: $0 <repo timestamp file>"
+  echo "usage: $0 <repo trusted timestamp file>"
   exit 1
 fi
 repo_timestamp_file=$1
@@ -34,7 +40,7 @@ if [[ "$trusted_timestamp_data" != 1.0\|* ]]; then
   exit 1
 fi
 
-# ensure the trusted timestamp file first line has 6 | characters (7 fields)
+# ensure the timestamp data line has 6 | characters (7 fields)
 if [[ 6 -ne $(echo "$trusted_timestamp_data" | tr -cd '|' | wc -c) ]]; then
   echo "Error: $repo_timestamp_file does not have exactly 6 | characters on the first line, indicating this is not a valid TimestampIt! Trusted Timestamp version 1.0 file"
   exit 1
