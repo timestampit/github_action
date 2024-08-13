@@ -47,7 +47,7 @@ runs:
           # Setup the new branch with a README and a verification script
           # These files are taken from this github action repo
           touch README.md verify_repo_timestamp.sh
-          cat "${{ github.action_path }}/new_branch_files/README.md" > README.md
+          cat "${{ github.action_path }}/new_branch_files/new_branch_README.md" > README.md
           cat "${{ github.action_path }}/new_branch_files/verify_repo_timestamp.sh" > verify_repo_timestamp.sh
           chmod 755 verify_repo_timestamp.sh
           git add README.md verify_repo_timestamp.sh

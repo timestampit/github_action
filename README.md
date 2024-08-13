@@ -58,7 +58,7 @@ Several inputs are defined to customize behavior:
     timestampit_password: your_timestampit_password
 ```
 
-## Examples
+## Full Workflow Examples
 
 ### Recommended usage
 
