@@ -1,18 +1,18 @@
 name: 'TimestampIt!'
-description: 'Create Trusted Timestamps for your GitHub repository using TimestampIt!'
+description: 'Create signed Trusted Timestamps that prove when your code was pushed or merged'
 inputs:
   timestamps_branch:  # id of input
-    description: 'Branch where trusted timestamps are stored'
+    description: 'Branch where trusted timestamps will be stored'
     required: false
     default: 'trusted_timestamps'
   timestampit_username:  # id of input
     description: 'Username for TimestampIt! user'
     required: false
-    default: 'public'
+    default: 'github_actions_default'
   timestampit_password:  # id of input
     description: 'Password for TimestampIt! user'
     required: false
-    default: 'publicpublic'
+    default: 'wsgipbtk'
 runs:
   using: "composite"
   steps:
