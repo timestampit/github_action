@@ -1,5 +1,8 @@
 name: 'TimestampIt!'
 description: 'Create signed Trusted Timestamps that prove when your code was pushed or merged'
+branding:
+  icon: 'clock'
+  color: 'black'
 inputs:
   timestamps_branch:
     description: 'Branch where trusted timestamps will be stored'
