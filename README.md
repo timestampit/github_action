@@ -7,21 +7,23 @@ Trusted Timestamps prove when your code was merged or pushed into your GitHub re
 Trusted Timestamps prove a time that your code or data inventions existed at. You can use these Trusted Timestamps
 to prove your original code or data predates any copies that may exist.
 
+See our [example repo trusted_timestamps branch](https://github.com/timestampit/action_test/tree/trusted_timestamps) for an example of the files created by this action.
+
 ## Usage
 
 All inputs are optional. You can use it simply with
 ```
-- uses: timestampit/github_action@v0.5
+- uses: timestampit/github_action@v1.0
 ```
 
 Several inputs are defined to customize behavior:
 ```
-- uses: timestampit/github_action@v0.8
+- uses: timestampit/github_action@v1.0
   with:
     # Name of the branch where trusted timestamps will be stored.
     # If this branch does not already exist it will be created
     # as an orphan, empty branch.
-    new_branch_files/verify_repo_timestamp.sh: trusted_timestamps
+    timestamps_branch: trusted_timestamps
 
     # Username for the TimestampIt! account to use.
     # If not defined, then a default public user for GitHub actions is used
@@ -45,7 +47,7 @@ For more information of the fields within a trusted timestamp, see https://times
 
 #### Verifying Trusted Timestamps
 
-By verifying a Trusted Timestamp file, you are proving that the git commit sha in the Trusted Timestamp existed in GitHub at the timestamped time. This is done by comparing the actual repo digest to the one in the Trusted Timestamp, and also by checking the signature on the Trusted Timestamp to ensure it is an authentic TimestampIt! created Trusted Timestamp.
+By verifying a Trusted Timestamp file, you are proving that the git commit sha in the Trusted Timestamp existed in your git repo at the timestamped time. You are also proving that all files committed to the repo at that commit sha were present at the timestamped time. This is done by comparing the actual repo digest to the one in the Trusted Timestamp, and also by checking the signature on the Trusted Timestamp to ensure it is an authentic TimestampIt! created Trusted Timestamp.
 
 When the action first runs, it commits a script `verify_repo_timestamp.sh` that can be used to verify these Trusted Timestamp files. This happens on the configured `timestamps_branch` (trusted_timestamps by default).
 
@@ -81,8 +83,6 @@ jobs:
     steps:
       - uses: timestampit/github_action@v0.8
 ```
-
-TODO: example for pull request merges
 
 ## Repository privacy
 
