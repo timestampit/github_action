@@ -45,7 +45,7 @@ m02WEes/RuEB/uKIldiaYCjIR1tDI/2JcIgs/BxQui0+lK8R3ackco3OZ8T9/xsV8evBZijoRbup7O20
 
 For more information of the fields within a trusted timestamp, see https://timestampit.com/docs/design.
 
-#### How is a Trusted Timestamp different from the timestamp on a git commit?
+### How is a Trusted Timestamp different from the timestamp on a git commit?
 
 Trusted Timestamps are made using a trusted clock and then cryptographically signed to prevent them being altered.
 
@@ -53,7 +53,7 @@ Timestamps on regular git commits are made using the local clock of the machine 
 
 Trusted Timestamps are a higher standard of proof for when code was actually added to a git repo since the timestamp can not be forged or altered.
 
-#### Verifying Trusted Timestamps
+### Verifying Trusted Timestamps
 
 By verifying a Trusted Timestamp file, you are proving that the git commit sha in the Trusted Timestamp existed in your git repo at the timestamped time. You are also proving that all files committed to the repo at that commit sha were present at the timestamped time. This is done by comparing the actual repo digest to the one in the Trusted Timestamp, and also by checking the signature on the Trusted Timestamp to ensure it is an authentic TimestampIt! created Trusted Timestamp.
 
